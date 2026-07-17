@@ -3140,3 +3140,59 @@
 /ip route add dst-address="192.30.255.0/24" gateway=wg2 comment="src:github"
 /ipv6 route add dst-address="2620:112:3000::/44" gateway=wg2 comment="src:github"
 /ipv6 route add dst-address="2a0a:a440::/29" gateway=wg2 comment="src:github"
+
+# --- discord (20) ---
+/ip route remove [/ip route find where comment="src:discord"]
+/ipv6 route remove [/ipv6 route find where comment="src:discord"]
+/ip route add dst-address="162.159.128.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.128.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.129.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.129.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.130.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.130.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.130.234/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.133.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.133.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.133.234/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.134.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.134.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.134.234/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.135.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.135.233/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.135.234/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.136.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.136.234/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.137.232/32" gateway=wg2 comment="src:discord"
+/ip route add dst-address="162.159.138.232/32" gateway=wg2 comment="src:discord"
+
+# --- pornhub (1) ---
+/ip route remove [/ip route find where comment="src:pornhub"]
+/ipv6 route remove [/ipv6 route find where comment="src:pornhub"]
+/ip route add dst-address="66.254.114.41/32" gateway=wg2 comment="src:pornhub"
+
+# --- openai_web (10) ---
+/ip route remove [/ip route find where comment="src:openai_web"]
+/ipv6 route remove [/ipv6 route find where comment="src:openai_web"]
+/ip route add dst-address="104.18.32.47/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="104.18.33.45/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="104.18.37.228/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="104.18.41.158/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="162.159.140.245/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="172.64.146.98/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="172.64.150.28/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="172.64.154.211/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="172.64.155.209/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="172.66.0.243/32" gateway=wg2 comment="src:openai_web"
+
+# --- resend (3) ---
+/ip route remove [/ip route find where comment="src:resend"]
+/ipv6 route remove [/ipv6 route find where comment="src:resend"]
+/ip route add dst-address="76.76.21.22/32" gateway=wg2 comment="src:resend"
+/ip route add dst-address="104.20.29.242/32" gateway=wg2 comment="src:resend"
+/ip route add dst-address="172.66.165.132/32" gateway=wg2 comment="src:resend"
+
+# --- atakdomain (2) ---
+/ip route remove [/ip route find where comment="src:atakdomain"]
+/ipv6 route remove [/ipv6 route find where comment="src:atakdomain"]
+/ip route add dst-address="104.21.42.49/32" gateway=wg2 comment="src:atakdomain"
+/ip route add dst-address="172.67.200.193/32" gateway=wg2 comment="src:atakdomain"

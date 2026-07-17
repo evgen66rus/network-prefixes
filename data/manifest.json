@@ -11,13 +11,18 @@
     "railway",
     "openai",
     "anthropic",
-    "github"
+    "github",
+    "discord",
+    "pornhub",
+    "openai_web",
+    "resend",
+    "atakdomain"
   ],
   "non_routable_cidr_services": [
     "amazon",
     "microsoft"
   ],
-  "domain_services": [
+  "resolved_from_dns_services": [
     "discord",
     "pornhub",
     "openai_web",

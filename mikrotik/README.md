@@ -19,16 +19,21 @@
 - Список сервисов — `manifest.json → routable_cidr_services`. `amazon.txt`/
   `microsoft.txt` **не включены** — это весь адресный пул AWS/Azure целиком,
   заворачивать его в VPN означает пустить туда любой сайт на этом облаке.
-- **`data/domains.txt`** (Discord/Pornhub/OpenAI-веб/Resend/atakdomain.com)
-  в `wg2-nets.rsc` **не входит** — статическому маршруту нужен конкретный
-  CIDR, а не имя домена. Для этих сервисов нужен отдельный механизм
-  (address-list с FQDN + policy routing через mangle) — в прошлой версии
-  этого README он был описан, но не завёлся на практике; пока не встроен
-  в автообновление. Можно добавить руками при необходимости:
+- **Discord/Pornhub/OpenAI-веб/Resend/atakdomain.com** — своего ASN у них
+  нет (общий CDN), поэтому `data/<service>.txt` для них — результат DNS-
+  резолва конкретных доменов (`data/domains.txt` хранит сами FQDN для
+  справки), а не announced-prefixes. Резолв идёт раз в сутки с GitHub
+  Actions runner-а — IP может не совпадать с тем, что видит клиент из
+  другой геолокации, и меняться чаще, чем раз в сутки. На практике часть
+  трафика к этим адресам иногда может уйти в обход VPN. Надёжнее (но
+  сложнее в настройке) — address-list с FQDN прямо на MikroTik:
   ```
   /ip firewall address-list add list=wg2-domains address=discord.com
   ```
-  и промаршрутизировать этот address-list отдельно, когда понадобится.
+  RouterOS резолвит и следит за изменениями сам, с точки зрения роутера,
+  но такой address-list требует отдельного policy routing (mangle +
+  routing table) поверх статических маршрутов — этот контур не встроен
+  в автообновление сейчас.
 
 ## Установка (один раз)
 
