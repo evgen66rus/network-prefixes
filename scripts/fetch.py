@@ -61,13 +61,19 @@ def resolve_domains(domains: list[str]) -> list[str]:
 
 
 def dedupe_and_sort(prefixes: list[str]) -> list[str]:
-    nets = set()
+    """Убирает дубликаты/подсети, поглощённые более широкой сетью, и
+    объединяет соседние блоки в один супернет — это заметно сокращает
+    число статических маршрутов (важно для ASN вроде Apple с ~2000
+    отдельных объявленных подсетей)."""
+    v4, v6 = [], []
     for p in prefixes:
         try:
-            nets.add(ipaddress.ip_network(p, strict=False))
+            net = ipaddress.ip_network(p, strict=False)
         except ValueError:
             continue
-    return [str(n) for n in sorted(nets, key=lambda n: (n.version, n))]
+        (v4 if net.version == 4 else v6).append(net)
+    collapsed = list(ipaddress.collapse_addresses(v4)) + list(ipaddress.collapse_addresses(v6))
+    return [str(n) for n in sorted(collapsed, key=lambda n: (n.version, n))]
 
 
 # --- Официальные фиды -------------------------------------------------
@@ -119,6 +125,8 @@ ASN_SERVICES: dict[str, list[int]] = {
     "openai": [401518],                       # у OpenAI своих префиксов почти нет, см. README
     "anthropic": [399358],                    # claude.ai, api/console.anthropic.com — свой ASN, не CDN
     "github": [36459],                        # github.com, api.github.com, codeload.github.com
+    "apple": [714, 6185],                     # весь Apple (FaceTime/iMessage + App Store/iCloud/обновления и т.п.,
+                                               # своей разбивки по сервисам у Apple нет — см. README)
 }
 
 # Префиксы, которые не объявляются собственным ASN сервиса через BGP, но по
@@ -173,7 +181,7 @@ DOMAIN_SERVICES: dict[str, list[str]] = {
 ROUTABLE_CIDR_SERVICES = [
     "meta", "telegram", "cloudflare", "twitter", "netflix",
     "youtube_google", "linkedin", "tiktok", "railway", "openai", "anthropic",
-    "github",
+    "github", "apple",
 ] + list(DOMAIN_SERVICES.keys())
 NON_ROUTABLE_CIDR_SERVICES = ["amazon", "microsoft"]
 
