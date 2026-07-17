@@ -97,6 +97,7 @@ ASN_SERVICES: dict[str, list[int]] = {
     "tiktok": [138699],
     "railway": [400940],
     "openai": [401518],                       # у OpenAI своих префиксов почти нет, см. README
+    "anthropic": [399358],                    # claude.ai, api/console.anthropic.com — свой ASN, не CDN
 }
 
 # Официальные фиды: имя_файла -> функция
@@ -140,7 +141,7 @@ DOMAIN_SERVICES: dict[str, list[str]] = {
 # AWS/Azure — исключены из "routable", оставлены в репо для справки.
 ROUTABLE_CIDR_SERVICES = [
     "meta", "telegram", "cloudflare", "twitter", "netflix",
-    "youtube_google", "linkedin", "tiktok", "railway", "openai",
+    "youtube_google", "linkedin", "tiktok", "railway", "openai", "anthropic",
 ]
 NON_ROUTABLE_CIDR_SERVICES = ["amazon", "microsoft"]
 

@@ -3092,6 +3092,12 @@
 /ip firewall address-list remove [/ip firewall address-list find where list="wg2-nets" and comment="src:openai"]
 /ip firewall address-list add list=wg2-nets address="199.47.142.0/23" comment="src:openai"
 
+# --- anthropic (3) ---
+/ip firewall address-list remove [/ip firewall address-list find where list="wg2-nets" and comment="src:anthropic"]
+/ip firewall address-list add list=wg2-nets address="160.79.104.0/23" comment="src:anthropic"
+/ip firewall address-list add list=wg2-nets address="2607:6bc0::/48" comment="src:anthropic"
+/ip firewall address-list add list=wg2-nets address="2607:6bc0:11::/48" comment="src:anthropic"
+
 # --- domains (18) ---
 /ip firewall address-list remove [/ip firewall address-list find where list="wg2-nets" and comment="src:domains"]
 /ip firewall address-list add list=wg2-nets address="discord.com" comment="src:domains"

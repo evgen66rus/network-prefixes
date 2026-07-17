@@ -9,7 +9,8 @@
     "linkedin",
     "tiktok",
     "railway",
-    "openai"
+    "openai",
+    "anthropic"
   ],
   "non_routable_cidr_services": [
     "amazon",

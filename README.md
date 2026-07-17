@@ -21,6 +21,7 @@ IPv4/IPv6-префиксы популярных сервисов для proxy / 
 | `data/tiktok.txt` | TikTok | ASN 138699 |
 | `data/railway.txt` | Railway (хостинг, включая `stage.dealcrm.app`) | ASN 400940 |
 | `data/openai.txt` | OpenAI (см. ограничение ниже) | ASN 401518 |
+| `data/anthropic.txt` | Anthropic (claude.ai, api/console.anthropic.com) | ASN 399358 |
 | `data/domains.txt` | Discord, Pornhub, OpenAI-веб, Resend, atakdomain.com | см. ниже |
 | `data/manifest.json` | Машиночитаемый список: какие CIDR-файлы годятся для роутинга через VPN | — |
 | `data/all.txt` | Объединённый список всех CIDR-файлов (без `domains.txt`) | — |
