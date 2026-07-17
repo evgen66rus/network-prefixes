@@ -23,7 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 MIKROTIK_DIR = ROOT / "mikrotik"
-ADDRESS_LIST_NAME = "wg2-nets"
+WG_INTERFACE = "wg2"
 
 USER_AGENT = "network-prefixes-fetcher/1.0 (+https://github.com/evgen66rus/network-prefixes)"
 
@@ -98,6 +98,15 @@ ASN_SERVICES: dict[str, list[int]] = {
     "railway": [400940],
     "openai": [401518],                       # у OpenAI своих префиксов почти нет, см. README
     "anthropic": [399358],                    # claude.ai, api/console.anthropic.com — свой ASN, не CDN
+    "github": [36459],                        # github.com, api.github.com, codeload.github.com
+}
+
+# Префиксы, которые не объявляются собственным ASN сервиса через BGP, но по
+# whois принадлежат ему (обычно BYOIP через стороннюю CDN-сеть) — добавляются
+# поверх ASN-данных. 185.199.108.0/22 — GitHub Pages/raw/objects/avatars,
+# announced через Fastly (AS54113), но netname в whois — GitHub, Inc.
+EXTRA_STATIC_PREFIXES: dict[str, list[str]] = {
+    "github": ["185.199.108.0/22"],  # raw.githubusercontent.com, github.io, *.githubusercontent.com
 }
 
 # Официальные фиды: имя_файла -> функция
@@ -142,6 +151,7 @@ DOMAIN_SERVICES: dict[str, list[str]] = {
 ROUTABLE_CIDR_SERVICES = [
     "meta", "telegram", "cloudflare", "twitter", "netflix",
     "youtube_google", "linkedin", "tiktok", "railway", "openai", "anthropic",
+    "github",
 ]
 NON_ROUTABLE_CIDR_SERVICES = ["amazon", "microsoft"]
 
@@ -177,41 +187,41 @@ def write_manifest() -> None:
     print(f"manifest -> {out.relative_to(ROOT)}")
 
 
-def _rsc_group(comment: str, addresses: list[str]) -> list[str]:
+def _rsc_route_group(comment: str, prefixes: list[str]) -> list[str]:
+    # /ip route и /ipv6 route — разные меню в RouterOS, IPv4/IPv6 нельзя мешать в одном add.
     lines = [
-        f'/ip firewall address-list remove '
-        f'[/ip firewall address-list find where list="{ADDRESS_LIST_NAME}" and comment="{comment}"]'
+        f'/ip route remove [/ip route find where comment="{comment}"]',
+        f'/ipv6 route remove [/ipv6 route find where comment="{comment}"]',
     ]
-    for addr in addresses:
-        lines.append(
-            f'/ip firewall address-list add list={ADDRESS_LIST_NAME} address="{addr}" comment="{comment}"'
-        )
+    for p in prefixes:
+        if ":" in p:
+            lines.append(f'/ipv6 route add dst-address="{p}" gateway={WG_INTERFACE} comment="{comment}"')
+        else:
+            lines.append(f'/ip route add dst-address="{p}" gateway={WG_INTERFACE} comment="{comment}"')
     return lines
 
 
 def write_mikrotik_script() -> None:
-    """Готовый .rsc для /import на MikroTik: полностью пересобирает address-list
-    wg2-nets из ROUTABLE_CIDR_SERVICES + доменов (amazon/microsoft сюда не входят —
-    см. NON_ROUTABLE_CIDR_SERVICES). Каждая группа сначала чистится по comment,
-    затем наполняется заново — так router.rsc сам решает add/remove, без diff-логики
-    в RouterOS-скрипте (он медленный на больших циклах)."""
+    """Готовый .rsc для /import на MikroTik: полностью пересобирает статические
+    маршруты через WG_INTERFACE из ROUTABLE_CIDR_SERVICES (amazon/microsoft
+    исключены, см. NON_ROUTABLE_CIDR_SERVICES). Каждая группа сначала чистится
+    по comment=src:<service>, затем наполняется заново.
+
+    data/domains.txt (Discord/Pornhub/OpenAI-web/Resend/atakdomain.com) сюда
+    не входит — статическому маршруту нужен CIDR, а не имя домена; для них
+    нужен отдельный механизм (address-list с FQDN + policy routing)."""
     MIKROTIK_DIR.mkdir(exist_ok=True)
     out_lines = [
         "# АВТОГЕНЕРИРУЕТСЯ scripts/fetch.py — не редактировать руками.",
         "# Импортировать на MikroTik: /import file-name=wg2-nets.rsc",
-        f"# Полностью пересобирает группы address-list \"{ADDRESS_LIST_NAME}\" по comment=src:<service>.",
+        f'# Полностью пересобирает статические маршруты через gateway={WG_INTERFACE} по comment=src:<service>.',
+        "# data/domains.txt сюда не входит (нужен FQDN, а не CIDR) — см. mikrotik/README.md.",
     ]
     for name in ROUTABLE_CIDR_SERVICES:
         f = DATA_DIR / f"{name}.txt"
-        addrs = [l for l in f.read_text().splitlines() if l and not l.startswith("#")]
-        out_lines.append(f"\n# --- {name} ({len(addrs)}) ---")
-        out_lines.extend(_rsc_group(f"src:{name}", addrs))
-
-    domains: list[str] = []
-    for group in DOMAIN_SERVICES.values():
-        domains.extend(group)
-    out_lines.append(f"\n# --- domains ({len(domains)}) ---")
-    out_lines.extend(_rsc_group("src:domains", domains))
+        prefixes = [l for l in f.read_text().splitlines() if l and not l.startswith("#")]
+        out_lines.append(f"\n# --- {name} ({len(prefixes)}) ---")
+        out_lines.extend(_rsc_route_group(f"src:{name}", prefixes))
 
     out = MIKROTIK_DIR / "wg2-nets.rsc"
     out.write_text("\n".join(out_lines) + "\n")
@@ -235,7 +245,12 @@ def main() -> int:
             for asn in asns:
                 prefixes.extend(ripestat_prefixes(asn))
             asn_list = ", ".join(f"AS{a}" for a in asns)
-            write_service_file(name, prefixes, f"RIPEstat announced-prefixes for {asn_list}")
+            source_note = f"RIPEstat announced-prefixes for {asn_list}"
+            if name in EXTRA_STATIC_PREFIXES:
+                extra = EXTRA_STATIC_PREFIXES[name]
+                prefixes.extend(extra)
+                source_note += f" + static: {', '.join(extra)} (BYOIP, see script comment)"
+            write_service_file(name, prefixes, source_note)
         except Exception as e:  # noqa: BLE001
             print(f"[ERROR] {name}: {e}", file=sys.stderr)
             had_errors = True
