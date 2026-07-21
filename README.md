@@ -42,3 +42,7 @@ python3 scripts/fetch.py
 ## MikroTik
 
 См. [`mikrotik/README.md`](mikrotik/README.md).
+
+## Linux (wg0)
+
+См. [`linux/README.md`](linux/README.md).

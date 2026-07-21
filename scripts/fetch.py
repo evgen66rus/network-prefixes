@@ -24,6 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 MIKROTIK_DIR = ROOT / "mikrotik"
+LINUX_DIR = ROOT / "linux"
 WG_INTERFACE = "wg2"
 
 USER_AGENT = "network-prefixes-fetcher/1.0 (+https://github.com/evgen66rus/network-prefixes)"
@@ -260,6 +261,24 @@ def write_mikrotik_script() -> None:
     print(f"mikrotik script -> {out.relative_to(ROOT)}")
 
 
+def write_linux_routes_file() -> None:
+    """Плоский список префиксов (тот же набор, что и в wg2-nets.rsc) для
+    linux/update-routes.sh — сама логика add/remove живёт в bash-скрипте,
+    здесь только данные."""
+    LINUX_DIR.mkdir(exist_ok=True)
+    prefixes: list[str] = []
+    for name in ROUTABLE_CIDR_SERVICES:
+        f = DATA_DIR / f"{name}.txt"
+        prefixes.extend(l for l in f.read_text().splitlines() if l and not l.startswith("#"))
+    lines = dedupe_and_sort(prefixes)
+    out = LINUX_DIR / "wg0-routes.txt"
+    out.write_text(
+        "# АВТОГЕНЕРИРУЕТСЯ scripts/fetch.py — не редактировать руками.\n"
+        "# Используется linux/update-routes.sh.\n" + "\n".join(lines) + "\n"
+    )
+    print(f"linux routes -> {out.relative_to(ROOT)} ({len(lines)} prefixes)")
+
+
 def main() -> int:
     DATA_DIR.mkdir(exist_ok=True)
     had_errors = False
@@ -300,6 +319,7 @@ def main() -> int:
     write_domains_file()
     write_manifest()
     write_mikrotik_script()
+    write_linux_routes_file()
 
     # combined file — только CIDR-файлы (domains.txt не CIDR, all.txt сам себе не источник)
     all_prefixes: list[str] = []

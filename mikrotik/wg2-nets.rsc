@@ -210,7 +210,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (146) ---
+# --- youtube_google (145) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -263,7 +263,6 @@
 /ip route add dst-address="72.14.192.0/18" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="74.114.24.0/21" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="74.125.0.0/16" gateway=wg2 comment="src:youtube_google"
-/ip route add dst-address="102.217.64.0/22" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.161.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.163.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.164.0/24" gateway=wg2 comment="src:youtube_google"
@@ -505,5 +504,5 @@
 # --- atakdomain (2) ---
 /ip route remove [/ip route find where comment="src:atakdomain"]
 /ipv6 route remove [/ipv6 route find where comment="src:atakdomain"]
-/ip route add dst-address="188.114.96.1/32" gateway=wg2 comment="src:atakdomain"
-/ip route add dst-address="188.114.97.1/32" gateway=wg2 comment="src:atakdomain"
+/ip route add dst-address="104.21.42.49/32" gateway=wg2 comment="src:atakdomain"
+/ip route add dst-address="172.67.200.193/32" gateway=wg2 comment="src:atakdomain"
