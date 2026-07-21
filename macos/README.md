@@ -36,17 +36,28 @@ brew install wireguard-tools
 
 ## Установка (один раз)
 
+Скачать и запустить **отдельными командами** (не через `curl | sudo bash` и не
+через `&&` в одной строке — на некоторых системах это обрывает загрузку):
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/evgen66rus/network-prefixes/main/macos/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/evgen66rus/network-prefixes/main/macos/install.sh -o install.sh
+```
+```bash
+sudo bash install.sh
+```
+```bash
+rm install.sh
 ```
 
-Ставит `/usr/local/sbin/wg0-nets-update.sh` и LaunchDaemon
+Ставит `/Library/wg0-nets/wg0-nets-update.sh` и LaunchDaemon
 (`com.network-prefixes.wg0-nets-update`, каждые 6ч + при загрузке).
+`/usr/local/sbin` намеренно не используется — на Apple Silicon это часть
+запечатанного системного тома (read-only), запись туда невозможна даже под root.
 
 ## Ручное обновление / первый подъём туннеля
 
 ```bash
-sudo /usr/local/sbin/wg0-nets-update.sh
+sudo /Library/wg0-nets/wg0-nets-update.sh
 ```
 
 ## Проверка
@@ -63,5 +74,5 @@ cat /var/log/wg0-nets-update.log
 sudo launchctl bootout system /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo rm /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo wg-quick down ~/.config/wg0-nets/wg0.conf
-sudo rm /usr/local/sbin/wg0-nets-update.sh ~/.config/wg0-nets/wg0.conf
+sudo rm -rf /Library/wg0-nets ~/.config/wg0-nets/wg0.conf
 ```

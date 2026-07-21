@@ -17,7 +17,8 @@ if [ ! -f "$REAL_HOME/.config/wg0-nets/template.conf" ]; then
     exit 1
 fi
 
-BIN="/usr/local/sbin/wg0-nets-update.sh"
+BIN="/Library/wg0-nets/wg0-nets-update.sh"
+mkdir -p "$(dirname "$BIN")"
 curl -fsSL "https://raw.githubusercontent.com/evgen66rus/network-prefixes/main/macos/update-tunnel.sh" -o "$BIN"
 chmod +x "$BIN"
 
