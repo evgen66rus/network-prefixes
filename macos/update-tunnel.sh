@@ -39,12 +39,9 @@ awk -v allowed="$ALLOWED" '
     { print }
 ' "$TEMPLATE" > "$TMP_CONF"
 
-# "wg show wg0" ненадёжен как проверка "туннель поднят" на macOS: у wg-quick
-# свой internal name-mapping (wg0 -> utunN), который может разойтись с тем,
-# что видит `wg show` (наблюдалось на практике: wg show wg0 не находил
-# интерфейс, а wg-quick up тут же падал с "wg0 already exists as utunN").
-# Поэтому ищем СВОИ интерфейсы по peer public key — это однозначно наш
-# туннель, независимо от имени/номера utun, и не трогает чужие VPN на машине.
+# Ищем СВОИ интерфейсы по peer public key (а не по имени "wg0" — internal
+# name-mapping wg-quick может разойтись с тем, что видит `wg show`, это уже
+# наблюдалось на практике). Однозначно наш туннель, не трогает чужие VPN.
 OUR_PEER_KEY="$(grep -m1 '^PublicKey' "$TEMPLATE" | awk '{print $3}')"
 
 find_our_ifaces() {
@@ -54,10 +51,11 @@ find_our_ifaces() {
     '
 }
 
-if [ -f "$ACTIVE_CONF" ] && diff -q "$TMP_CONF" "$ACTIVE_CONF" >/dev/null 2>&1 && [ -n "$(find_our_ifaces)" ]; then
-    exit 0  # конфиг не изменился и туннель уже поднят
-fi
-
+# Никакого "пропустить, если не изменилось": именно эта оптимизация чаще
+# всего застревала — find_our_ifaces видит зависший интерфейс от прошлого
+# сбоя, считает "уже всё ок" и выходит, даже не запуская очистку ниже.
+# Полный цикл down+cleanup+up занимает секунды, гоняется редко (раз в 6ч
+# или вручную) — упрощение того не стоит.
 install -m 600 "$TMP_CONF" "$ACTIVE_CONF"
 
 # GUI-приложение WireGuard регистрирует свой туннель как обычный VPN-сервис
@@ -91,4 +89,5 @@ done
 
 wg-quick up "$ACTIVE_CONF"
 
+echo "OK: tunnel resynced, $(wc -l < "$TMP_PREFIXES") prefixes"
 logger -t wg0-nets "tunnel $IFACE resynced, $(wc -l < "$TMP_PREFIXES") prefixes" 2>/dev/null || true
