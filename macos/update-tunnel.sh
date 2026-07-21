@@ -4,6 +4,10 @@
 # этого репозитория — см. TEMPLATE ниже. Требует root (wg-quick).
 set -euo pipefail
 
+# launchd запускает с минимальным PATH, где нет /opt/homebrew/bin (Apple Silicon)
+# или /usr/local/bin (Intel) — без этого wg/wg-quick "command not found".
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+
 TEMPLATE="$HOME/.config/wg0-nets/template.conf"
 ACTIVE_CONF="$HOME/.config/wg0-nets/wg0.conf"
 IFACE="wg0"
