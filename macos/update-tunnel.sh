@@ -39,8 +39,8 @@ awk -v allowed="$ALLOWED" '
     { print }
 ' "$TEMPLATE" > "$TMP_CONF"
 
-if [ -f "$ACTIVE_CONF" ] && diff -q "$TMP_CONF" "$ACTIVE_CONF" >/dev/null 2>&1; then
-    exit 0  # без изменений
+if [ -f "$ACTIVE_CONF" ] && diff -q "$TMP_CONF" "$ACTIVE_CONF" >/dev/null 2>&1 && wg show "$IFACE" >/dev/null 2>&1; then
+    exit 0  # конфиг не изменился и туннель уже поднят
 fi
 
 install -m 600 "$TMP_CONF" "$ACTIVE_CONF"
