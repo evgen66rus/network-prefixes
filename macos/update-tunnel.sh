@@ -45,6 +45,20 @@ fi
 
 install -m 600 "$TMP_CONF" "$ACTIVE_CONF"
 
+# GUI-приложение WireGuard регистрирует свой туннель как обычный VPN-сервис
+# (NEVPNManager, bundle id com.wireguard.macos) — если он сейчас Connected,
+# он использует тот же ключ/адрес, что и наш wg-quick-туннель, и будет с ним
+# конфликтовать. Останавливаем через scutil --nc, а не убийством процесса.
+scutil --nc list 2>/dev/null | grep "com.wireguard.macos" | grep "(Connected)" | awk '{print $3}' | while IFS= read -r uuid; do
+    [ -z "$uuid" ] && continue
+    echo "Останавливаю GUI-туннель WireGuard ($uuid)" >&2
+    scutil --nc stop "$uuid" >/dev/null 2>&1 || true
+done
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    scutil --nc list 2>/dev/null | grep "com.wireguard.macos" | grep -q "(Connected)" || break
+    sleep 1
+done
+
 if wg show "$IFACE" >/dev/null 2>&1; then
     wg-quick down "$ACTIVE_CONF" || true
 fi
