@@ -39,7 +39,22 @@ awk -v allowed="$ALLOWED" '
     { print }
 ' "$TEMPLATE" > "$TMP_CONF"
 
-if [ -f "$ACTIVE_CONF" ] && diff -q "$TMP_CONF" "$ACTIVE_CONF" >/dev/null 2>&1 && wg show "$IFACE" >/dev/null 2>&1; then
+# "wg show wg0" ненадёжен как проверка "туннель поднят" на macOS: у wg-quick
+# свой internal name-mapping (wg0 -> utunN), который может разойтись с тем,
+# что видит `wg show` (наблюдалось на практике: wg show wg0 не находил
+# интерфейс, а wg-quick up тут же падал с "wg0 already exists as utunN").
+# Поэтому ищем СВОИ интерфейсы по peer public key — это однозначно наш
+# туннель, независимо от имени/номера utun, и не трогает чужие VPN на машине.
+OUR_PEER_KEY="$(grep -m1 '^PublicKey' "$TEMPLATE" | awk '{print $3}')"
+
+find_our_ifaces() {
+    wg show all 2>/dev/null | awk -v key="$OUR_PEER_KEY" '
+        /^interface:/ { iface = $2 }
+        $1 == "peer:" && $2 == key { print iface }
+    '
+}
+
+if [ -f "$ACTIVE_CONF" ] && diff -q "$TMP_CONF" "$ACTIVE_CONF" >/dev/null 2>&1 && [ -n "$(find_our_ifaces)" ]; then
     exit 0  # конфиг не изменился и туннель уже поднят
 fi
 
@@ -49,6 +64,8 @@ install -m 600 "$TMP_CONF" "$ACTIVE_CONF"
 # (NEVPNManager, bundle id com.wireguard.macos) — если он сейчас Connected,
 # он использует тот же ключ/адрес, что и наш wg-quick-туннель, и будет с ним
 # конфликтовать. Останавливаем через scutil --nc, а не убийством процесса.
+# Его собственный utun (сандбоксированный, отдельный control-plane) сюда не
+# входит — find_our_ifaces видит только интерфейсы, поднятые через wg-quick.
 scutil --nc list 2>/dev/null | grep "com.wireguard.macos" | grep "(Connected)" | awk '{print $3}' | while IFS= read -r uuid; do
     [ -z "$uuid" ] && continue
     echo "Останавливаю GUI-туннель WireGuard ($uuid)" >&2
@@ -59,9 +76,19 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
 done
 
-if wg show "$IFACE" >/dev/null 2>&1; then
-    wg-quick down "$ACTIVE_CONF" || true
-fi
+# Штатный путь: down по своему же конфигу — это находит name-mapping wg0->utunN,
+# даже если "wg show wg0" его почему-то не видит (та самая нестыковка выше).
+wg-quick down "$ACTIVE_CONF" >/dev/null 2>&1 || true
+
+# Подчистка: если после этого остались висящие интерфейсы с НАШИМ peer key
+# (например, от прошлых прогонов, упавших ДО того, как down успевал отработать) —
+# сносим их напрямую. Точечно по ключу, поэтому чужие VPN/utun не задевает.
+find_our_ifaces | while IFS= read -r stale_iface; do
+    [ -z "$stale_iface" ] && continue
+    echo "Убираю зависший интерфейс $stale_iface" >&2
+    ifconfig "$stale_iface" destroy 2>/dev/null || true
+done
+
 wg-quick up "$ACTIVE_CONF"
 
 logger -t wg0-nets "tunnel $IFACE resynced, $(wc -l < "$TMP_PREFIXES") prefixes" 2>/dev/null || true
