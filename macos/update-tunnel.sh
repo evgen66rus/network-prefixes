@@ -74,20 +74,32 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
 done
 
+cleanup_stale_ifaces() {
+    find_our_ifaces | while IFS= read -r stale_iface; do
+        [ -z "$stale_iface" ] && continue
+        echo "Убираю зависший интерфейс $stale_iface" >&2
+        ifconfig "$stale_iface" destroy 2>/dev/null || true
+    done
+}
+
 # Штатный путь: down по своему же конфигу — это находит name-mapping wg0->utunN,
 # даже если "wg show wg0" его почему-то не видит (та самая нестыковка выше).
-wg-quick down "$ACTIVE_CONF" >/dev/null 2>&1 || true
+# Вывод не глушим — если down реально не отработал, это должно быть видно.
+wg-quick down "$ACTIVE_CONF" || true
 
-# Подчистка: если после этого остались висящие интерфейсы с НАШИМ peer key
-# (например, от прошлых прогонов, упавших ДО того, как down успевал отработать) —
-# сносим их напрямую. Точечно по ключу, поэтому чужие VPN/utun не задевает.
-find_our_ifaces | while IFS= read -r stale_iface; do
-    [ -z "$stale_iface" ] && continue
-    echo "Убираю зависший интерфейс $stale_iface" >&2
-    ifconfig "$stale_iface" destroy 2>/dev/null || true
-done
+# Пауза: `wg-quick down` убирает control-сокет и name-mapping файл, но сам
+# utun-девайс освобождается чуть позже (гонка) — без паузы следующий `up`
+# иногда натыкается на ещё не до конца снятый интерфейс ("already exists").
+sleep 2
+cleanup_stale_ifaces
+sleep 1
 
-wg-quick up "$ACTIVE_CONF"
+if ! wg-quick up "$ACTIVE_CONF"; then
+    echo "wg-quick up не удался с первой попытки, доп. очистка и повтор" >&2
+    cleanup_stale_ifaces
+    sleep 2
+    wg-quick up "$ACTIVE_CONF"
+fi
 
 echo "OK: tunnel resynced, $(wc -l < "$TMP_PREFIXES") prefixes"
 logger -t wg0-nets "tunnel $IFACE resynced, $(wc -l < "$TMP_PREFIXES") prefixes" 2>/dev/null || true
