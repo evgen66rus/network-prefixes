@@ -46,3 +46,7 @@ python3 scripts/fetch.py
 ## Linux (wg0)
 
 См. [`linux/README.md`](linux/README.md).
+
+## macOS (wg-quick)
+
+См. [`macos/README.md`](macos/README.md).
