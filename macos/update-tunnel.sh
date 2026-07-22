@@ -125,7 +125,10 @@ if [ -n "$GW" ] && [ -n "$PHYS_IFACE" ]; then
     printf 'pass out quick route-to (%s %s) proto tcp to any port { %s }\n' "$PHYS_IFACE" "$GW" "$MAIL_PORTS" \
         | pfctl -a "$PF_ANCHOR" -f - 2>&1 \
         | grep -Ev '^(No ALTQ|ALTQ related|pfctl: Use of -f|present in the main|See /etc/pf\.conf)|^$' >&2 || true
-    if pfctl -s Anchors 2>/dev/null | grep -qx "$PF_ANCHOR"; then
+    # -x (точное совпадение строки) тут неверно: `pfctl -s Anchors` выводит
+    # имена с отступом ("  wg0-nets-mailbypass"), из-за пробелов -x никогда
+    # не совпадёт — отсюда ложное "anchor не создался" при реально рабочем pf.
+    if pfctl -s Anchors 2>/dev/null | grep -qw "$PF_ANCHOR"; then
         echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
     else
         echo "PF: anchor $PF_ANCHOR не создался — mail-bypass НЕ применён" >&2
