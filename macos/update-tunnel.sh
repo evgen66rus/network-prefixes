@@ -111,9 +111,19 @@ GW="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}')"
 PHYS_IFACE="$(route -n get default 2>/dev/null | awk '/interface:/{print $2}')"
 if [ -n "$GW" ] && [ -n "$PHYS_IFACE" ]; then
     pfctl -e 2>/dev/null || true  # ref-counted; ошибка "already enabled" не страшна
+    # `pfctl -f -` всегда предупреждает про возможный flush главного ruleset —
+    # это безобидно (проверено: cisco.anyconnect.vpn/com.apple остаются на месте),
+    # но раньше скрипт глушил вообще любую ошибку через `|| true` и врал об успехе.
+    # Теперь фильтруем именно это известное предупреждение и проверяем результат
+    # по факту через pfctl -s Anchors, а не по exit code.
     printf 'pass out quick route-to (%s %s) proto tcp to any port { %s }\n' "$PHYS_IFACE" "$GW" "$MAIL_PORTS" \
-        | pfctl -a "$PF_ANCHOR" -f - 2>&1 | grep -v '^$' >&2 || true
-    echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
+        | pfctl -a "$PF_ANCHOR" -f - 2>&1 \
+        | grep -Ev '^(No ALTQ|ALTQ related|pfctl: Use of -f|present in the main|See /etc/pf\.conf)|^$' >&2 || true
+    if pfctl -s Anchors 2>/dev/null | grep -qx "$PF_ANCHOR"; then
+        echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
+    else
+        echo "PF: anchor $PF_ANCHOR не создался — mail-bypass НЕ применён" >&2
+    fi
 else
     echo "Не удалось определить default gateway/interface — mail-bypass PF правило не применено" >&2
 fi
