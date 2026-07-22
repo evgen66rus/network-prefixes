@@ -11,6 +11,8 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin
 TEMPLATE="$HOME/.config/wg0-nets/template.conf"
 ACTIVE_CONF="$HOME/.config/wg0-nets/wg0.conf"
 IFACE="wg0"
+MAIL_PORTS="25 465 587 110 995 143 993"  # SMTP/SMTPS/Submission, POP3/POP3S, IMAP/IMAPS
+PF_ANCHOR="wg0-nets-mailbypass"
 URL_PRIMARY="https://raw.githubusercontent.com/evgen66rus/network-prefixes/main/linux/wg0-routes.txt"
 URL_FALLBACK="https://cdn.jsdelivr.net/gh/evgen66rus/network-prefixes@main/linux/wg0-routes.txt"
 
@@ -99,6 +101,21 @@ if ! wg-quick up "$ACTIVE_CONF"; then
     cleanup_stale_ifaces
     sleep 2
     wg-quick up "$ACTIVE_CONF"
+fi
+
+# Почта (SMTP/IMAP/POP3) — в обход туннеля независимо от IP, портовое правило
+# в отдельном pf-anchor (не трогает /etc/pf.conf и чужие anchors вроде
+# cisco.anyconnect.vpn). AllowedIPs у нас не 0.0.0.0/0, так что настоящий
+# default gateway/interface не подменяется wg-quick и виден напрямую.
+GW="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}')"
+PHYS_IFACE="$(route -n get default 2>/dev/null | awk '/interface:/{print $2}')"
+if [ -n "$GW" ] && [ -n "$PHYS_IFACE" ]; then
+    pfctl -e 2>/dev/null || true  # ref-counted; ошибка "already enabled" не страшна
+    printf 'pass out quick route-to (%s %s) proto tcp to any port { %s }\n' "$PHYS_IFACE" "$GW" "$MAIL_PORTS" \
+        | pfctl -a "$PF_ANCHOR" -f - 2>&1 | grep -v '^$' >&2 || true
+    echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
+else
+    echo "Не удалось определить default gateway/interface — mail-bypass PF правило не применено" >&2
 fi
 
 echo "OK: tunnel resynced, $(wc -l < "$TMP_PREFIXES") prefixes"
