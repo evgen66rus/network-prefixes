@@ -115,23 +115,37 @@ fi
 # default gateway/interface не подменяется wg-quick и виден напрямую.
 GW="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}')"
 PHYS_IFACE="$(route -n get default 2>/dev/null | awk '/interface:/{print $2}')"
+PF_FILTER='^(No ALTQ|ALTQ related|pfctl: Use of -f|present in the main|See /etc/pf\.conf)|^$'
+
 if [ -n "$GW" ] && [ -n "$PHYS_IFACE" ]; then
     pfctl -e 2>/dev/null || true  # ref-counted; ошибка "already enabled" не страшна
-    # `pfctl -f -` всегда предупреждает про возможный flush главного ruleset —
-    # это безобидно (проверено: cisco.anyconnect.vpn/com.apple остаются на месте),
-    # но раньше скрипт глушил вообще любую ошибку через `|| true` и врал об успехе.
-    # Теперь фильтруем именно это известное предупреждение и проверяем результат
-    # по факту через pfctl -s Anchors, а не по exit code.
+
+    # Anchor, загруженный только через `pfctl -a ... -f -`, физически существует
+    # (виден в pfctl -s Anchors), но НЕ оценивается для реального трафика, пока
+    # главный ruleset его не ссылается строкой anchor "имя" — подтверждено живым
+    # тестом (tcptraceroute на port 25 всё равно шёл через utun6). Чиним это,
+    # перезагружая главный ruleset = содержимое /etc/pf.conf (файл на диске НЕ
+    # трогаем) + наша anchor-ссылка в конце. Делаем один раз (idempotent-check
+    # через pfctl -s rules), а не на каждом прогоне — меньше риска для
+    # cisco.anyconnect.vpn/com.apple, которые грузятся независимо от этого шага.
+    if ! pfctl -s rules 2>/dev/null | grep -q "anchor \"$PF_ANCHOR\""; then
+        echo "PF: подключаю anchor $PF_ANCHOR к главному ruleset'у" >&2
+        { cat /etc/pf.conf; printf 'anchor "%s"\n' "$PF_ANCHOR"; } \
+            | pfctl -f - 2>&1 | grep -Ev "$PF_FILTER" >&2 || true
+    fi
+
     printf 'pass out quick route-to (%s %s) proto tcp to any port { %s }\n' "$PHYS_IFACE" "$GW" "$MAIL_PORTS" \
         | pfctl -a "$PF_ANCHOR" -f - 2>&1 \
-        | grep -Ev '^(No ALTQ|ALTQ related|pfctl: Use of -f|present in the main|See /etc/pf\.conf)|^$' >&2 || true
+        | grep -Ev "$PF_FILTER" >&2 || true
+
     # -x (точное совпадение строки) тут неверно: `pfctl -s Anchors` выводит
     # имена с отступом ("  wg0-nets-mailbypass"), из-за пробелов -x никогда
     # не совпадёт — отсюда ложное "anchor не создался" при реально рабочем pf.
-    if pfctl -s Anchors 2>/dev/null | grep -qw "$PF_ANCHOR"; then
+    if pfctl -s Anchors 2>/dev/null | grep -qw "$PF_ANCHOR" \
+        && pfctl -s rules 2>/dev/null | grep -q "anchor \"$PF_ANCHOR\""; then
         echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
     else
-        echo "PF: anchor $PF_ANCHOR не создался — mail-bypass НЕ применён" >&2
+        echo "PF: anchor $PF_ANCHOR не подключён — mail-bypass НЕ применён" >&2
     fi
 else
     echo "Не удалось определить default gateway/interface — mail-bypass PF правило не применено" >&2
