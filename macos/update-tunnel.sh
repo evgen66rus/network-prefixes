@@ -30,7 +30,9 @@ if ! curl -fsSL "$URL_PRIMARY" -o "$TMP_PREFIXES"; then
     curl -fsSL "$URL_FALLBACK" -o "$TMP_PREFIXES"
 fi
 
-ALLOWED="$(grep -v '^#' "$TMP_PREFIXES" | grep -v '^[[:space:]]*$' | paste -sd, -)"
+# `|| true` — та же ловушка pipefail: если после фильтрации не останется ни
+# одной строки, grep вернёт 1 и убьёт скрипт здесь же, до проверки ниже.
+ALLOWED="$(grep -v '^#' "$TMP_PREFIXES" | grep -v '^[[:space:]]*$' | paste -sd, - || true)"
 if [ -z "$ALLOWED" ]; then
     echo "Пустой список префиксов, ничего не меняю" >&2
     exit 1
@@ -44,7 +46,7 @@ awk -v allowed="$ALLOWED" '
 # Ищем СВОИ интерфейсы по peer public key (а не по имени "wg0" — internal
 # name-mapping wg-quick может разойтись с тем, что видит `wg show`, это уже
 # наблюдалось на практике). Однозначно наш туннель, не трогает чужие VPN.
-OUR_PEER_KEY="$(grep -m1 '^PublicKey' "$TEMPLATE" | awk '{print $3}')"
+OUR_PEER_KEY="$(grep -m1 '^PublicKey' "$TEMPLATE" | awk '{print $3}' || true)"
 
 find_our_ifaces() {
     wg show all 2>/dev/null | awk -v key="$OUR_PEER_KEY" '
@@ -66,11 +68,15 @@ install -m 600 "$TMP_CONF" "$ACTIVE_CONF"
 # конфликтовать. Останавливаем через scutil --nc, а не убийством процесса.
 # Его собственный utun (сандбоксированный, отдельный control-plane) сюда не
 # входит — find_our_ifaces видит только интерфейсы, поднятые через wg-quick.
+# `|| true` в конце всего пайплайна обязателен: если GUI-туннель сейчас
+# Disconnected, "grep (Connected)" не находит строк и возвращает код 1 —
+# с pipefail это код выхода всего пайплайна, и set -e молча убивал скрипт
+# именно тут (не найдено — не ошибка, но выглядело как полный сбой).
 scutil --nc list 2>/dev/null | grep "com.wireguard.macos" | grep "(Connected)" | awk '{print $3}' | while IFS= read -r uuid; do
     [ -z "$uuid" ] && continue
     echo "Останавливаю GUI-туннель WireGuard ($uuid)" >&2
     scutil --nc stop "$uuid" >/dev/null 2>&1 || true
-done
+done || true
 for _ in 1 2 3 4 5 6 7 8 9 10; do
     scutil --nc list 2>/dev/null | grep "com.wireguard.macos" | grep -q "(Connected)" || break
     sleep 1
