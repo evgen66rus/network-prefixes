@@ -11,8 +11,8 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin
 TEMPLATE="$HOME/.config/wg0-nets/template.conf"
 ACTIVE_CONF="$HOME/.config/wg0-nets/wg0.conf"
 IFACE="wg0"
-MAIL_PORTS="25 465 587 110 995 143 993"  # SMTP/SMTPS/Submission, POP3/POP3S, IMAP/IMAPS
-PF_ANCHOR="wg0-nets-mailbypass"
+MAIL_HOSTS="smtp.gmail.com imap.gmail.com pop.gmail.com"
+MAIL_ROUTES_STATE="$HOME/.config/wg0-nets/mail-routes.txt"
 URL_PRIMARY="https://raw.githubusercontent.com/evgen66rus/network-prefixes/main/linux/wg0-routes.txt"
 URL_FALLBACK="https://cdn.jsdelivr.net/gh/evgen66rus/network-prefixes@main/linux/wg0-routes.txt"
 
@@ -109,46 +109,44 @@ if ! wg-quick up "$ACTIVE_CONF"; then
     wg-quick up "$ACTIVE_CONF"
 fi
 
-# Почта (SMTP/IMAP/POP3) — в обход туннеля независимо от IP, портовое правило
-# в отдельном pf-anchor (не трогает /etc/pf.conf и чужие anchors вроде
-# cisco.anyconnect.vpn). AllowedIPs у нас не 0.0.0.0/0, так что настоящий
-# default gateway/interface не подменяется wg-quick и виден напрямую.
+# Почта (Gmail SMTP/IMAP/POP3) — в обход туннеля. pf route-to здесь не
+# работает: он не меняет source-адрес, уже выбранный сокетом по таблице
+# маршрутизации (тот же 10.8.0.40 от туннеля), так что пакет бесполезен даже
+# если физически уйдёт через en0 — подтверждено tcpdump. Вместо этого — более
+# специфичные /32-маршруты на резолвленные IP почтовых серверов через реальный
+# шлюз: /32 всегда побеждает широкий /16 через туннель по longest-prefix-match,
+# и это решение ядра, а не pf, так что source-адрес выбирается правильно сам.
 GW="$(route -n get default 2>/dev/null | awk '/gateway:/{print $2}')"
 PHYS_IFACE="$(route -n get default 2>/dev/null | awk '/interface:/{print $2}')"
-PF_FILTER='^(No ALTQ|ALTQ related|pfctl: Use of -f|present in the main|See /etc/pf\.conf)|^$'
 
-if [ -n "$GW" ] && [ -n "$PHYS_IFACE" ]; then
-    pfctl -e 2>/dev/null || true  # ref-counted; ошибка "already enabled" не страшна
+if [ -n "$GW" ]; then
+    NEW_MAIL_IPS="$(mktemp)"
+    for host in $MAIL_HOSTS; do
+        dscacheutil -q host -a name "$host" 2>/dev/null | awk '/^ip_address: /{print $2}'
+    done | sort -u > "$NEW_MAIL_IPS"
 
-    # Anchor, загруженный только через `pfctl -a ... -f -`, физически существует
-    # (виден в pfctl -s Anchors), но НЕ оценивается для реального трафика, пока
-    # главный ruleset его не ссылается строкой anchor "имя" — подтверждено живым
-    # тестом (tcptraceroute на port 25 всё равно шёл через utun6). Чиним это,
-    # перезагружая главный ruleset = содержимое /etc/pf.conf (файл на диске НЕ
-    # трогаем) + наша anchor-ссылка в конце. Делаем один раз (idempotent-check
-    # через pfctl -s rules), а не на каждом прогоне — меньше риска для
-    # cisco.anyconnect.vpn/com.apple, которые грузятся независимо от этого шага.
-    if ! pfctl -s rules 2>/dev/null | grep -q "anchor \"$PF_ANCHOR\""; then
-        echo "PF: подключаю anchor $PF_ANCHOR к главному ruleset'у" >&2
-        { cat /etc/pf.conf; printf 'anchor "%s"\n' "$PF_ANCHOR"; } \
-            | pfctl -f - 2>&1 | grep -Ev "$PF_FILTER" >&2 || true
-    fi
+    mkdir -p "$(dirname "$MAIL_ROUTES_STATE")"
+    touch "$MAIL_ROUTES_STATE"
+    sort -u "$MAIL_ROUTES_STATE" -o "$MAIL_ROUTES_STATE"
 
-    printf 'pass out quick route-to (%s %s) proto tcp to any port { %s }\n' "$PHYS_IFACE" "$GW" "$MAIL_PORTS" \
-        | pfctl -a "$PF_ANCHOR" -f - 2>&1 \
-        | grep -Ev "$PF_FILTER" >&2 || true
+    # IP, которых больше нет в свежем резолве (сервер сменил адрес) — убрать.
+    comm -23 "$MAIL_ROUTES_STATE" "$NEW_MAIL_IPS" 2>/dev/null | while IFS= read -r ip; do
+        [ -z "$ip" ] && continue
+        route -q -n delete -inet "$ip" >/dev/null 2>&1 || true
+    done
 
-    # -x (точное совпадение строки) тут неверно: `pfctl -s Anchors` выводит
-    # имена с отступом ("  wg0-nets-mailbypass"), из-за пробелов -x никогда
-    # не совпадёт — отсюда ложное "anchor не создался" при реально рабочем pf.
-    if pfctl -s Anchors 2>/dev/null | grep -qw "$PF_ANCHOR" \
-        && pfctl -s rules 2>/dev/null | grep -q "anchor \"$PF_ANCHOR\""; then
-        echo "PF: почта ($MAIL_PORTS) идёт через $PHYS_IFACE/$GW в обход туннеля"
-    else
-        echo "PF: anchor $PF_ANCHOR не подключён — mail-bypass НЕ применён" >&2
-    fi
+    # Текущие IP — переустановить маршрут (delete+add, идемпотентно).
+    while IFS= read -r ip; do
+        [ -z "$ip" ] && continue
+        route -q -n delete -inet "$ip" >/dev/null 2>&1 || true
+        route -q -n add -inet "$ip" "$GW" >/dev/null 2>&1 || true
+    done < "$NEW_MAIL_IPS"
+
+    cp "$NEW_MAIL_IPS" "$MAIL_ROUTES_STATE"
+    rm -f "$NEW_MAIL_IPS"
+    echo "Почта ($MAIL_HOSTS): $(wc -l < "$MAIL_ROUTES_STATE" | tr -d ' ') IP через $PHYS_IFACE/$GW в обход туннеля"
 else
-    echo "Не удалось определить default gateway/interface — mail-bypass PF правило не применено" >&2
+    echo "Не удалось определить default gateway — mail-bypass маршруты не применены" >&2
 fi
 
 echo "OK: tunnel resynced, $(wc -l < "$TMP_PREFIXES") prefixes"

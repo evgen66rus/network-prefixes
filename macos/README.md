@@ -72,26 +72,25 @@ sudo launchctl print system/com.network-prefixes.wg0-nets-update
 cat /var/log/wg0-nets-update.log
 ```
 
-## Почта (SMTP/IMAP/POP3) в обход туннеля
+## Почта (Gmail SMTP/IMAP/POP3) в обход туннеля
 
-Gmail и прочие почтовые серверы часто сидят на тех же IP, что и остальные
-сервисы (YouTube и т.п.) — разделить по адресу нельзя. Вместо этого
-`update-tunnel.sh` грузит pf-правило (anchor `wg0-nets-mailbypass`),
-которое отправляет TCP-порты 25/465/587 (SMTP), 110/995 (POP3), 143/993
-(IMAP) через реальный интерфейс/шлюз, независимо от IP назначения.
+Gmail сидит на тех же IP, что и остальные сервисы Google (YouTube и т.п.) —
+разделить по широкому диапазону нельзя. Пробовали через pf `route-to`
+(правило по порту вместо адреса) — не сработало: `route-to` не меняет
+source-адрес, который сокет уже выбрал по таблице маршрутизации (адрес
+туннеля), так что пакет всё равно бесполезен на реальном интернете, даже
+если физически уйдёт через нужный интерфейс — подтверждено `tcpdump`.
 
-Anchor сам по себе (`pfctl -a ... -f -`) правила не применяет к
-реальному трафику — нужна ссылка `anchor "wg0-nets-mailbypass"` в
-активном главном ruleset'е. Скрипт добавляет её один раз, перезагружая
-активный ruleset как `/etc/pf.conf` (файл на диске не меняется) плюс
-эта строка — не трогает `cisco.anyconnect.vpn`/`com.apple` (они грузятся
-независимо). Если что-то пошло не так — откат одной командой:
-```bash
-sudo pfctl -f /etc/pf.conf
-```
-Возвращает активный ruleset ровно к тому, что на диске (без нашей
-anchor-ссылки). Перезагрузка Mac даёт тот же эффект — мы ничего не
-пишем на диск, только в активное состояние pf.
+Вместо этого `update-tunnel.sh` при каждом прогоне резолвит
+`smtp.gmail.com`/`imap.gmail.com`/`pop.gmail.com` (через `dscacheutil`,
+локально на самом Маке — не на GitHub Actions, точка зрения именно вашей
+сети) и добавляет `/32`-маршруты на эти конкретные IP через реальный
+шлюз. `/32` всегда побеждает широкий диапазон туннеля по
+longest-prefix-match — это решение ядра, а не pf, source-адрес
+подбирается правильно сам. Список резолвленных IP хранится в
+`~/.config/wg0-nets/mail-routes.txt`; при следующем резолве маршруты для
+адресов, которые сервер уже не использует, убираются, для новых —
+добавляются.
 
 ## Откат
 
@@ -99,6 +98,6 @@ anchor-ссылки). Перезагрузка Mac даёт тот же эффе
 sudo launchctl bootout system /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo rm /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo wg-quick down ~/.config/wg0-nets/wg0.conf
-sudo pfctl -a wg0-nets-mailbypass -F all
-sudo rm -rf /Library/wg0-nets ~/.config/wg0-nets/wg0.conf
+while read -r ip; do sudo route -q -n delete -inet "$ip"; done < ~/.config/wg0-nets/mail-routes.txt
+sudo rm -rf /Library/wg0-nets ~/.config/wg0-nets/wg0.conf ~/.config/wg0-nets/mail-routes.txt
 ```
