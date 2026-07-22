@@ -73,4 +73,14 @@
     :log info "wg2-nets: mailbypass mangle rules added"
 }
 
+# Без этого правила routing-mark, выставленный mangle'ом, ни на что не влияет —
+# пакет помечается (счётчик в mangle растёт), но реальный поиск маршрута всё
+# равно идёт по main, где для многих адресов есть более специфичный маршрут
+# через wg2, который и побеждает. Подтверждено вживую: /routing rule print
+# был пуст, и почта продолжала уходить в туннель несмотря на рабочий mangle.
+:if ([:len [/routing rule find where table=$rtable]] = 0) do={
+    /routing rule add action=lookup-only-in-table table=$rtable routing-mark=$rtable
+    :log info "wg2-nets: routing rule added for $rtable"
+}
+
 :log info "wg2-nets: setup done. Run '/system script run wg2-nets-update' once manually to populate the routes now."
