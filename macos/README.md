@@ -63,11 +63,25 @@ sudo /Library/wg0-nets/wg0-nets-update.sh
 
 ## Проверка
 
+`wg show wg0` не работает — `wg` не резолвит "дружественные" имена
+(это фича только `wg-quick`), нужен реальный `utunN`:
+
 ```bash
-sudo wg show wg0
+sudo wg show all
 sudo launchctl print system/com.network-prefixes.wg0-nets-update
 cat /var/log/wg0-nets-update.log
 ```
+
+## Почта (SMTP/IMAP/POP3) в обход туннеля
+
+Gmail и прочие почтовые серверы часто сидят на тех же IP, что и остальные
+сервисы (YouTube и т.п.) — разделить по адресу нельзя. Вместо этого
+`update-tunnel.sh` при каждом прогоне грузит pf-правило (anchor
+`wg0-nets-mailbypass`), которое отправляет TCP-порты 25/465/587
+(SMTP), 110/995 (POP3), 143/993 (IMAP) через реальный интерфейс/шлюз,
+независимо от IP назначения. Не трогает `/etc/pf.conf` и другие
+anchors (проверено: Cisco AnyConnect использует `cisco.anyconnect.vpn`,
+Little Snitch pf вообще не использует).
 
 ## Откат
 
@@ -75,5 +89,6 @@ cat /var/log/wg0-nets-update.log
 sudo launchctl bootout system /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo rm /Library/LaunchDaemons/com.network-prefixes.wg0-nets-update.plist
 sudo wg-quick down ~/.config/wg0-nets/wg0.conf
+sudo pfctl -a wg0-nets-mailbypass -F all
 sudo rm -rf /Library/wg0-nets ~/.config/wg0-nets/wg0.conf
 ```
