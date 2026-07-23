@@ -166,11 +166,10 @@
 /ipv6 route add dst-address="2a06:98c0::/29" gateway=wg2 comment="src:cloudflare"
 /ipv6 route add dst-address="2c0f:f248::/32" gateway=wg2 comment="src:cloudflare"
 
-# --- twitter (15) ---
+# --- twitter (14) ---
 /ip route remove [/ip route find where comment="src:twitter"]
 /ipv6 route remove [/ipv6 route find where comment="src:twitter"]
 /ip route add dst-address="64.63.0.0/18" gateway=wg2 comment="src:twitter"
-/ip route add dst-address="69.195.160.0/19" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="103.252.112.0/22" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="104.244.41.0/24" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="104.244.42.0/24" gateway=wg2 comment="src:twitter"
