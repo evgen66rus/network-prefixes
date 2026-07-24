@@ -209,7 +209,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (145) ---
+# --- youtube_google (147) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -287,6 +287,7 @@
 /ip route add dst-address="136.22.176.0/21" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.22.184.0/23" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.22.186.0/24" gateway=wg2 comment="src:youtube_google"
+/ip route add dst-address="136.23.39.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.23.48.0/20" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.121.4.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.121.32.0/21" gateway=wg2 comment="src:youtube_google"
@@ -309,6 +310,7 @@
 /ip route add dst-address="193.186.4.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="199.36.154.0/23" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="199.36.156.0/24" gateway=wg2 comment="src:youtube_google"
+/ip route add dst-address="200.226.0.0/16" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="207.223.160.0/20" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="208.68.108.0/22" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="208.76.215.0/24" gateway=wg2 comment="src:youtube_google"
@@ -441,7 +443,7 @@
 /ipv6 route add dst-address="2620:112:3000::/44" gateway=wg2 comment="src:github"
 /ipv6 route add dst-address="2a0a:a440::/29" gateway=wg2 comment="src:github"
 
-# --- apple (11) ---
+# --- apple (10) ---
 /ip route remove [/ip route find where comment="src:apple"]
 /ipv6 route remove [/ipv6 route find where comment="src:apple"]
 /ip route add dst-address="17.0.0.0/8" gateway=wg2 comment="src:apple"
@@ -450,7 +452,6 @@
 /ip route add dst-address="139.178.128.0/18" gateway=wg2 comment="src:apple"
 /ip route add dst-address="144.178.0.0/18" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2403:300::/32" gateway=wg2 comment="src:apple"
-/ipv6 route add dst-address="2404:5e40:17::/48" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2620:0:1b00::/48" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2620:149::/32" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2a01:b740::/32" gateway=wg2 comment="src:apple"
