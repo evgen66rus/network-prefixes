@@ -509,9 +509,10 @@
 /ipv6 route add dst-address="2606:4700:10::6814:1df2/128" gateway=wg2 comment="src:resend"
 /ipv6 route add dst-address="2606:4700:10::ac42:a584/128" gateway=wg2 comment="src:resend"
 
-# --- atakdomain (3) ---
+# --- atakdomain (4) ---
 /ip route remove [/ip route find where comment="src:atakdomain"]
 /ipv6 route remove [/ipv6 route find where comment="src:atakdomain"]
-/ip route add dst-address="172.64.80.1/32" gateway=wg2 comment="src:atakdomain"
+/ip route add dst-address="104.21.42.49/32" gateway=wg2 comment="src:atakdomain"
+/ip route add dst-address="172.67.200.193/32" gateway=wg2 comment="src:atakdomain"
 /ipv6 route add dst-address="2606:4700:3033::ac43:c8c1/128" gateway=wg2 comment="src:atakdomain"
 /ipv6 route add dst-address="2606:4700:3035::6815:2a31/128" gateway=wg2 comment="src:atakdomain"
