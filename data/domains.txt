@@ -24,3 +24,6 @@ api.resend.com
 # atakdomain
 atakdomain.com
 www.atakdomain.com
+# teletype
+teletype.in
+www.teletype.in

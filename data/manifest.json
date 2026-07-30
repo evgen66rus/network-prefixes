@@ -17,7 +17,8 @@
     "pornhub",
     "openai_web",
     "resend",
-    "atakdomain"
+    "atakdomain",
+    "teletype"
   ],
   "non_routable_cidr_services": [
     "amazon",
@@ -28,6 +29,7 @@
     "pornhub",
     "openai_web",
     "resend",
-    "atakdomain"
+    "atakdomain",
+    "teletype"
   ]
 }

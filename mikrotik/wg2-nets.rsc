@@ -166,11 +166,10 @@
 /ipv6 route add dst-address="2a06:98c0::/29" gateway=wg2 comment="src:cloudflare"
 /ipv6 route add dst-address="2c0f:f248::/32" gateway=wg2 comment="src:cloudflare"
 
-# --- twitter (15) ---
+# --- twitter (14) ---
 /ip route remove [/ip route find where comment="src:twitter"]
 /ipv6 route remove [/ipv6 route find where comment="src:twitter"]
 /ip route add dst-address="64.63.0.0/18" gateway=wg2 comment="src:twitter"
-/ip route add dst-address="69.195.160.0/19" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="103.252.112.0/22" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="104.244.41.0/24" gateway=wg2 comment="src:twitter"
 /ip route add dst-address="104.244.42.0/24" gateway=wg2 comment="src:twitter"
@@ -210,7 +209,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (145) ---
+# --- youtube_google (148) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -263,6 +262,7 @@
 /ip route add dst-address="72.14.192.0/18" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="74.114.24.0/21" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="74.125.0.0/16" gateway=wg2 comment="src:youtube_google"
+/ip route add dst-address="102.66.249.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.161.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.163.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="104.237.164.0/24" gateway=wg2 comment="src:youtube_google"
@@ -288,6 +288,7 @@
 /ip route add dst-address="136.22.176.0/21" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.22.184.0/23" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.22.186.0/24" gateway=wg2 comment="src:youtube_google"
+/ip route add dst-address="136.23.39.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.23.48.0/20" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.121.4.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="136.121.32.0/21" gateway=wg2 comment="src:youtube_google"
@@ -310,6 +311,7 @@
 /ip route add dst-address="193.186.4.0/24" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="199.36.154.0/23" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="199.36.156.0/24" gateway=wg2 comment="src:youtube_google"
+/ip route add dst-address="200.226.0.0/16" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="207.223.160.0/20" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="208.68.108.0/22" gateway=wg2 comment="src:youtube_google"
 /ip route add dst-address="208.76.215.0/24" gateway=wg2 comment="src:youtube_google"
@@ -442,7 +444,7 @@
 /ipv6 route add dst-address="2620:112:3000::/44" gateway=wg2 comment="src:github"
 /ipv6 route add dst-address="2a0a:a440::/29" gateway=wg2 comment="src:github"
 
-# --- apple (11) ---
+# --- apple (10) ---
 /ip route remove [/ip route find where comment="src:apple"]
 /ipv6 route remove [/ipv6 route find where comment="src:apple"]
 /ip route add dst-address="17.0.0.0/8" gateway=wg2 comment="src:apple"
@@ -451,7 +453,6 @@
 /ip route add dst-address="139.178.128.0/18" gateway=wg2 comment="src:apple"
 /ip route add dst-address="144.178.0.0/18" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2403:300::/32" gateway=wg2 comment="src:apple"
-/ipv6 route add dst-address="2404:5e40:17::/48" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2620:0:1b00::/48" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2620:149::/32" gateway=wg2 comment="src:apple"
 /ipv6 route add dst-address="2a01:b740::/32" gateway=wg2 comment="src:apple"
@@ -480,39 +481,33 @@
 /ipv6 route remove [/ipv6 route find where comment="src:pornhub"]
 /ip route add dst-address="66.254.114.41/32" gateway=wg2 comment="src:pornhub"
 
-# --- openai_web (16) ---
+# --- openai_web (8) ---
 /ip route remove [/ip route find where comment="src:openai_web"]
 /ipv6 route remove [/ipv6 route find where comment="src:openai_web"]
-/ip route add dst-address="104.18.32.47/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="8.6.112.0/32" gateway=wg2 comment="src:openai_web"
+/ip route add dst-address="8.47.69.0/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="104.18.33.45/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="104.18.37.228/32" gateway=wg2 comment="src:openai_web"
-/ip route add dst-address="104.18.41.158/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="162.159.140.245/32" gateway=wg2 comment="src:openai_web"
-/ip route add dst-address="172.64.146.98/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="172.64.150.28/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="172.64.154.211/32" gateway=wg2 comment="src:openai_web"
-/ip route add dst-address="172.64.155.209/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="172.66.0.243/32" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2606:4700:4402::6812:25e4/128" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2606:4700:4408::ac40:9bd1/128" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2606:4700:4409::ac40:961c/128" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2a06:98c1:3101::6812:202f/128" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2a06:98c1:3108::6812:299e/128" gateway=wg2 comment="src:openai_web"
-/ipv6 route add dst-address="2a06:98c1:310b::ac40:9262/128" gateway=wg2 comment="src:openai_web"
 
-# --- resend (5) ---
+# --- resend (3) ---
 /ip route remove [/ip route find where comment="src:resend"]
 /ipv6 route remove [/ipv6 route find where comment="src:resend"]
 /ip route add dst-address="76.76.21.22/32" gateway=wg2 comment="src:resend"
 /ip route add dst-address="104.20.29.242/32" gateway=wg2 comment="src:resend"
 /ip route add dst-address="172.66.165.132/32" gateway=wg2 comment="src:resend"
-/ipv6 route add dst-address="2606:4700:10::6814:1df2/128" gateway=wg2 comment="src:resend"
-/ipv6 route add dst-address="2606:4700:10::ac42:a584/128" gateway=wg2 comment="src:resend"
 
-# --- atakdomain (4) ---
+# --- atakdomain (2) ---
 /ip route remove [/ip route find where comment="src:atakdomain"]
 /ipv6 route remove [/ipv6 route find where comment="src:atakdomain"]
 /ip route add dst-address="104.21.42.49/32" gateway=wg2 comment="src:atakdomain"
 /ip route add dst-address="172.67.200.193/32" gateway=wg2 comment="src:atakdomain"
-/ipv6 route add dst-address="2606:4700:3033::ac43:c8c1/128" gateway=wg2 comment="src:atakdomain"
-/ipv6 route add dst-address="2606:4700:3035::6815:2a31/128" gateway=wg2 comment="src:atakdomain"
+
+# --- teletype (2) ---
+/ip route remove [/ip route find where comment="src:teletype"]
+/ipv6 route remove [/ipv6 route find where comment="src:teletype"]
+/ip route add dst-address="8.6.112.0/32" gateway=wg2 comment="src:teletype"
+/ip route add dst-address="8.47.69.0/32" gateway=wg2 comment="src:teletype"
