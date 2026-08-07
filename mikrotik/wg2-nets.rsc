@@ -208,7 +208,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (150) ---
+# --- youtube_google (151) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -357,6 +357,7 @@
 /ipv6 route add dst-address="2a00:1450::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2a00:1588:d801::/48" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2a00:1588:d802::/48" gateway=wg2 comment="src:youtube_google"
+/ipv6 route add dst-address="2a02:4dc0::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2a0f:f4c1:2::/48" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2c0f:2280:a::/48" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2c0f:f088::/32" gateway=wg2 comment="src:youtube_google"
