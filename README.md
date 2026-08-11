@@ -27,6 +27,8 @@ IPv4/IPv6-префиксы популярных сервисов для proxy / 
 | `data/resend.txt` | Resend |
 | `data/atakdomain.txt` | atakdomain.com |
 | `data/teletype.txt` | teletype.in |
+| `data/hashicorp.txt` | hashicorp.com |
+| `data/griddynamics.txt` | griddynamics.com |
 | `data/all.txt` | Объединённый список |
 | `data/manifest.json` | Какие файлы участвуют в роутинге через MikroTik |
 

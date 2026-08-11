@@ -27,3 +27,9 @@ www.atakdomain.com
 # teletype
 teletype.in
 www.teletype.in
+# hashicorp
+hashicorp.com
+www.hashicorp.com
+# griddynamics
+griddynamics.com
+www.griddynamics.com

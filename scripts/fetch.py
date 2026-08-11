@@ -174,6 +174,8 @@ DOMAIN_SERVICES: dict[str, list[str]] = {
     "resend": ["resend.com", "api.resend.com"],
     "atakdomain": ["atakdomain.com", "www.atakdomain.com"],
     "teletype": ["teletype.in", "www.teletype.in"],
+    "hashicorp": ["hashicorp.com", "www.hashicorp.com"],
+    "griddynamics": ["griddynamics.com", "www.griddynamics.com"],
 }
 
 # Какие файлы из data/*.txt имеет смысл реально заворачивать в VPN/wg2.

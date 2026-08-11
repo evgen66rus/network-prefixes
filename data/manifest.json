@@ -18,7 +18,9 @@
     "openai_web",
     "resend",
     "atakdomain",
-    "teletype"
+    "teletype",
+    "hashicorp",
+    "griddynamics"
   ],
   "non_routable_cidr_services": [
     "amazon",
@@ -30,6 +32,8 @@
     "openai_web",
     "resend",
     "atakdomain",
-    "teletype"
+    "teletype",
+    "hashicorp",
+    "griddynamics"
   ]
 }
