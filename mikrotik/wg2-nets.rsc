@@ -528,14 +528,14 @@
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.129/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.35/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.22/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.123/32" gateway=wg2 comment="src:hashicorp"
 
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="3.171.85.13/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="3.171.85.43/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="3.171.85.93/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="3.171.85.102/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.46/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.57/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.76/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.99/32" gateway=wg2 comment="src:griddynamics"
