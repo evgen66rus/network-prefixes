@@ -477,7 +477,7 @@
 /ipv6 route remove [/ipv6 route find where comment="src:pornhub"]
 /ip route add dst-address="66.254.114.41/32" gateway=wg2 comment="src:pornhub"
 
-# --- openai_web (16) ---
+# --- openai_web (18) ---
 /ip route remove [/ip route find where comment="src:openai_web"]
 /ipv6 route remove [/ipv6 route find where comment="src:openai_web"]
 /ip route add dst-address="104.18.32.47/32" gateway=wg2 comment="src:openai_web"
@@ -490,9 +490,11 @@
 /ip route add dst-address="172.64.154.211/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="172.64.155.209/32" gateway=wg2 comment="src:openai_web"
 /ip route add dst-address="172.66.0.243/32" gateway=wg2 comment="src:openai_web"
+/ipv6 route add dst-address="2606:4700:7::f3/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2606:4700:4402::6812:25e4/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2606:4700:4408::ac40:9bd1/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2606:4700:4409::ac40:961c/128" gateway=wg2 comment="src:openai_web"
+/ipv6 route add dst-address="2a06:98c1:58::f3/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2a06:98c1:3101::6812:202f/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2a06:98c1:3108::6812:299e/128" gateway=wg2 comment="src:openai_web"
 /ipv6 route add dst-address="2a06:98c1:310b::ac40:9262/128" gateway=wg2 comment="src:openai_web"
@@ -514,26 +516,27 @@
 /ipv6 route add dst-address="2606:4700:3033::ac43:c8c1/128" gateway=wg2 comment="src:atakdomain"
 /ipv6 route add dst-address="2606:4700:3035::6815:2a31/128" gateway=wg2 comment="src:atakdomain"
 
-# --- teletype (1) ---
+# --- teletype (6) ---
 /ip route remove [/ip route find where comment="src:teletype"]
 /ipv6 route remove [/ipv6 route find where comment="src:teletype"]
-/ip route add dst-address="185.53.179.136/32" gateway=wg2 comment="src:teletype"
+/ip route add dst-address="104.26.6.241/32" gateway=wg2 comment="src:teletype"
+/ip route add dst-address="104.26.7.241/32" gateway=wg2 comment="src:teletype"
+/ip route add dst-address="172.67.68.252/32" gateway=wg2 comment="src:teletype"
+/ipv6 route add dst-address="2606:4700:20::681a:6f1/128" gateway=wg2 comment="src:teletype"
+/ipv6 route add dst-address="2606:4700:20::681a:7f1/128" gateway=wg2 comment="src:teletype"
+/ipv6 route add dst-address="2606:4700:20::ac43:44fc/128" gateway=wg2 comment="src:teletype"
 
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.193/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.35/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.241/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.123/32" gateway=wg2 comment="src:hashicorp"
 
-# --- griddynamics (8) ---
+# --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="18.67.76.9/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.38/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.54/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.117/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.164.124.11/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.164.124.64/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.164.124.76/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.164.124.91/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.4/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.34/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.90/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.117/32" gateway=wg2 comment="src:griddynamics"
