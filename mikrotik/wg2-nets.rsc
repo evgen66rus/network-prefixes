@@ -3,7 +3,7 @@
 # Полностью пересобирает статические маршруты через gateway=wg2 по comment=src:<service>.
 # data/domains.txt сюда не входит (нужен FQDN, а не CIDR) — см. mikrotik/README.md.
 
-# --- meta (119) ---
+# --- meta (117) ---
 /ip route remove [/ip route find where comment="src:meta"]
 /ipv6 route remove [/ipv6 route find where comment="src:meta"]
 /ip route add dst-address="31.13.24.0/21" gateway=wg2 comment="src:meta"
@@ -41,8 +41,7 @@
 /ip route add dst-address="129.134.130.0/24" gateway=wg2 comment="src:meta"
 /ip route add dst-address="129.134.132.0/24" gateway=wg2 comment="src:meta"
 /ip route add dst-address="129.134.135.0/24" gateway=wg2 comment="src:meta"
-/ip route add dst-address="129.134.136.0/23" gateway=wg2 comment="src:meta"
-/ip route add dst-address="129.134.139.0/24" gateway=wg2 comment="src:meta"
+/ip route add dst-address="129.134.136.0/22" gateway=wg2 comment="src:meta"
 /ip route add dst-address="129.134.140.0/24" gateway=wg2 comment="src:meta"
 /ip route add dst-address="129.134.143.0/24" gateway=wg2 comment="src:meta"
 /ip route add dst-address="129.134.144.0/24" gateway=wg2 comment="src:meta"
@@ -102,8 +101,7 @@
 /ipv6 route add dst-address="2a03:2887:ff30::/48" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2a03:2887:ff33::/48" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2a03:2887:ff37::/48" gateway=wg2 comment="src:meta"
-/ipv6 route add dst-address="2a03:2887:ff38::/48" gateway=wg2 comment="src:meta"
-/ipv6 route add dst-address="2a03:2887:ff3a::/47" gateway=wg2 comment="src:meta"
+/ipv6 route add dst-address="2a03:2887:ff38::/46" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2a03:2887:ff3e::/47" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2a03:2887:ff40::/46" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2a03:2887:ff44::/47" gateway=wg2 comment="src:meta"
@@ -536,7 +534,7 @@
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="52.84.199.4/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.34/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.90/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.117/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.84/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.88/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.92/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.118/32" gateway=wg2 comment="src:griddynamics"
