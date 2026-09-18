@@ -3,7 +3,7 @@
 # Полностью пересобирает статические маршруты через gateway=wg2 по comment=src:<service>.
 # data/domains.txt сюда не входит (нужен FQDN, а не CIDR) — см. mikrotik/README.md.
 
-# --- meta (117) ---
+# --- meta (118) ---
 /ip route remove [/ip route find where comment="src:meta"]
 /ipv6 route remove [/ipv6 route find where comment="src:meta"]
 /ip route add dst-address="31.13.24.0/21" gateway=wg2 comment="src:meta"
@@ -76,6 +76,7 @@
 /ip route add dst-address="163.70.128.0/17" gateway=wg2 comment="src:meta"
 /ip route add dst-address="163.77.132.0/23" gateway=wg2 comment="src:meta"
 /ip route add dst-address="163.77.136.0/23" gateway=wg2 comment="src:meta"
+/ip route add dst-address="163.77.160.0/20" gateway=wg2 comment="src:meta"
 /ip route add dst-address="163.114.128.0/20" gateway=wg2 comment="src:meta"
 /ip route add dst-address="173.252.64.0/18" gateway=wg2 comment="src:meta"
 /ip route add dst-address="179.60.192.0/22" gateway=wg2 comment="src:meta"
@@ -208,7 +209,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (143) ---
+# --- youtube_google (142) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -327,7 +328,6 @@
 /ipv6 route add dst-address="2404:6800::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2404:f340::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2600:1902::/31" gateway=wg2 comment="src:youtube_google"
-/ipv6 route add dst-address="2604:3080::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:48c0::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:ef80::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2606:40::/32" gateway=wg2 comment="src:youtube_google"
