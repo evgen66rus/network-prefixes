@@ -184,9 +184,11 @@
 /ipv6 route add dst-address="2606:1f80:f000::/36" gateway=wg2 comment="src:twitter"
 /ipv6 route add dst-address="2a04:9d40:f000::/36" gateway=wg2 comment="src:twitter"
 
-# --- netflix (21) ---
+# --- netflix (23) ---
 /ip route remove [/ip route find where comment="src:netflix"]
 /ipv6 route remove [/ipv6 route find where comment="src:netflix"]
+/ip route add dst-address="9.187.0.0/16" gateway=wg2 comment="src:netflix"
+/ip route add dst-address="9.188.0.0/16" gateway=wg2 comment="src:netflix"
 /ip route add dst-address="23.246.0.0/18" gateway=wg2 comment="src:netflix"
 /ip route add dst-address="37.77.184.0/21" gateway=wg2 comment="src:netflix"
 /ip route add dst-address="45.57.0.0/17" gateway=wg2 comment="src:netflix"
@@ -533,7 +535,7 @@
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="18.67.76.9/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.38/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.54/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.117/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.84/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.88/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.92/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.118/32" gateway=wg2 comment="src:griddynamics"
