@@ -402,7 +402,7 @@
 /ipv6 route add dst-address="2404:9dc0:cd03::/48" gateway=wg2 comment="src:tiktok"
 /ipv6 route add dst-address="2404:9dc0:cd04::/46" gateway=wg2 comment="src:tiktok"
 
-# --- railway (10) ---
+# --- railway (11) ---
 /ip route remove [/ip route find where comment="src:railway"]
 /ipv6 route remove [/ipv6 route find where comment="src:railway"]
 /ip route add dst-address="66.33.22.0/23" gateway=wg2 comment="src:railway"
@@ -415,6 +415,7 @@
 /ipv6 route add dst-address="2607:99c0::/38" gateway=wg2 comment="src:railway"
 /ipv6 route add dst-address="2607:99c0:800::/39" gateway=wg2 comment="src:railway"
 /ipv6 route add dst-address="2607:99c0:a00::/40" gateway=wg2 comment="src:railway"
+/ipv6 route add dst-address="2607:99c0:c00::/40" gateway=wg2 comment="src:railway"
 
 # --- openai (1) ---
 /ip route remove [/ip route find where comment="src:openai"]
@@ -527,9 +528,9 @@
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.130/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.129/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.61/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.22/32" gateway=wg2 comment="src:hashicorp"
 
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
