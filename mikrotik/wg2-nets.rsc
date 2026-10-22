@@ -211,7 +211,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (140) ---
+# --- youtube_google (139) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -328,7 +328,6 @@
 /ipv6 route add dst-address="2404:f340::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2407:aa80::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2600:1902::/31" gateway=wg2 comment="src:youtube_google"
-/ipv6 route add dst-address="2604:3080::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:48c0::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:ef80::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2606:40::/32" gateway=wg2 comment="src:youtube_google"
@@ -527,13 +526,14 @@
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.130/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.34/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.61/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.164/32" gateway=wg2 comment="src:hashicorp"
 
-# --- griddynamics (3) ---
+# --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="18.160.249.42/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.160.249.64/31" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.160.249.84/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.4/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.34/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.90/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="52.84.199.117/32" gateway=wg2 comment="src:griddynamics"
