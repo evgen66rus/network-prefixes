@@ -533,7 +533,7 @@
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="52.84.199.4/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.34/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.90/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="52.84.199.117/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.84/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.88/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.92/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="108.138.246.118/32" gateway=wg2 comment="src:griddynamics"
