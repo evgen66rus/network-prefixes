@@ -212,7 +212,7 @@
 /ipv6 route add dst-address="2a03:5640:4000::/34" gateway=wg2 comment="src:netflix"
 /ipv6 route add dst-address="2a03:5640:8000::/33" gateway=wg2 comment="src:netflix"
 
-# --- youtube_google (139) ---
+# --- youtube_google (138) ---
 /ip route remove [/ip route find where comment="src:youtube_google"]
 /ipv6 route remove [/ipv6 route find where comment="src:youtube_google"]
 /ip route add dst-address="8.8.4.0/24" gateway=wg2 comment="src:youtube_google"
@@ -327,7 +327,6 @@
 /ipv6 route add dst-address="2001:4860::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2404:6800::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2404:f340::/32" gateway=wg2 comment="src:youtube_google"
-/ipv6 route add dst-address="2407:aa80::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2600:1902::/31" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:48c0::/32" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2605:ef80::/32" gateway=wg2 comment="src:youtube_google"
@@ -531,10 +530,9 @@
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.22/32" gateway=wg2 comment="src:hashicorp"
 
-# --- griddynamics (4) ---
+# --- griddynamics (3) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="108.138.246.84/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="108.138.246.88/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="108.138.246.92/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="108.138.246.118/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.160.249.42/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.160.249.64/31" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.160.249.84/32" gateway=wg2 comment="src:griddynamics"
