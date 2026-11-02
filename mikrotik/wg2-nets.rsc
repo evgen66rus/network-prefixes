@@ -3,7 +3,7 @@
 # Полностью пересобирает статические маршруты через gateway=wg2 по comment=src:<service>.
 # data/domains.txt сюда не входит (нужен FQDN, а не CIDR) — см. mikrotik/README.md.
 
-# --- meta (121) ---
+# --- meta (122) ---
 /ip route remove [/ip route find where comment="src:meta"]
 /ipv6 route remove [/ipv6 route find where comment="src:meta"]
 /ip route add dst-address="31.13.24.0/21" gateway=wg2 comment="src:meta"
@@ -127,6 +127,7 @@
 /ipv6 route add dst-address="2c0f:ef78:9::/48" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2c0f:ef78:c::/47" gateway=wg2 comment="src:meta"
 /ipv6 route add dst-address="2c0f:ef78:10::/47" gateway=wg2 comment="src:meta"
+/ipv6 route add dst-address="2c0f:ef78:12::/48" gateway=wg2 comment="src:meta"
 
 # --- telegram (11) ---
 /ip route remove [/ip route find where comment="src:telegram"]
@@ -532,14 +533,14 @@
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.35/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.130/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.123/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.61/32" gateway=wg2 comment="src:hashicorp"
 
 # --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="18.67.76.9/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.38/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.54/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.67.76.117/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.46/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.57/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.76/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.99/32" gateway=wg2 comment="src:griddynamics"
