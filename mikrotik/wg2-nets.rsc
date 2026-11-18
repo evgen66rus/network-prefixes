@@ -362,7 +362,7 @@
 /ipv6 route add dst-address="2a0f:f4c1:2::/48" gateway=wg2 comment="src:youtube_google"
 /ipv6 route add dst-address="2c0f:fb50::/32" gateway=wg2 comment="src:youtube_google"
 
-# --- linkedin (24) ---
+# --- linkedin (26) ---
 /ip route remove [/ip route find where comment="src:linkedin"]
 /ipv6 route remove [/ipv6 route find where comment="src:linkedin"]
 /ip route add dst-address="103.20.92.0/22" gateway=wg2 comment="src:linkedin"
@@ -378,10 +378,12 @@
 /ip route add dst-address="144.2.178.0/23" gateway=wg2 comment="src:linkedin"
 /ip route add dst-address="144.2.180.0/22" gateway=wg2 comment="src:linkedin"
 /ip route add dst-address="144.2.185.0/24" gateway=wg2 comment="src:linkedin"
+/ip route add dst-address="144.2.194.0/24" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:109:c001::/48" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:109:c002::/48" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:109:c00a::/48" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:119:50c0::/48" gateway=wg2 comment="src:linkedin"
+/ipv6 route add dst-address="2620:119:50c3::/48" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:119:50e5::/48" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:119:50e6::/47" gateway=wg2 comment="src:linkedin"
 /ipv6 route add dst-address="2620:119:50e8::/48" gateway=wg2 comment="src:linkedin"
@@ -537,13 +539,14 @@
 # --- hashicorp (3) ---
 /ip route remove [/ip route find where comment="src:hashicorp"]
 /ipv6 route remove [/ipv6 route find where comment="src:hashicorp"]
-/ip route add dst-address="66.33.60.66/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="66.33.60.130/32" gateway=wg2 comment="src:hashicorp"
 /ip route add dst-address="76.76.21.21/32" gateway=wg2 comment="src:hashicorp"
-/ip route add dst-address="76.76.21.142/32" gateway=wg2 comment="src:hashicorp"
+/ip route add dst-address="76.76.21.61/32" gateway=wg2 comment="src:hashicorp"
 
-# --- griddynamics (3) ---
+# --- griddynamics (4) ---
 /ip route remove [/ip route find where comment="src:griddynamics"]
 /ipv6 route remove [/ipv6 route find where comment="src:griddynamics"]
-/ip route add dst-address="18.160.249.42/32" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.160.249.64/31" gateway=wg2 comment="src:griddynamics"
-/ip route add dst-address="18.160.249.84/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.46/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.57/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.76/32" gateway=wg2 comment="src:griddynamics"
+/ip route add dst-address="18.238.96.99/32" gateway=wg2 comment="src:griddynamics"
